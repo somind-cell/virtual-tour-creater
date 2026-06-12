@@ -1,0 +1,266 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@photo-sphere-viewer/core/index.css';
+@import '@photo-sphere-viewer/markers-plugin/index.css';
+
+@layer base {
+  :root {
+    --background: 220 16% 10%;
+    --foreground: 210 20% 92%;
+
+    --card: 220 14% 14%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 220 14% 14%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 20%;
+    --secondary-foreground: 210 20% 85%;
+
+    --muted: 220 12% 18%;
+    --muted-foreground: 215 14% 55%;
+
+    --accent: 30 90% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 12% 22%;
+    --input: 220 12% 22%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 16% 12%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 18%;
+    --sidebar-accent-foreground: 210 20% 85%;
+    --sidebar-border: 220 12% 22%;
+    --sidebar-ring: 217 91% 60%;
+
+    --nav-hotspot: 217 91% 60%;
+    --info-hotspot: 30 90% 55%;
+    --toolbar-bg: 220 16% 8%;
+    --viewer-bg: 220 16% 6%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.psv-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hotspot-nav {
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--nav-hotspot));
+  border: 2px solid hsl(var(--nav-hotspot) / 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px hsl(var(--nav-hotspot) / 0.4);
+}
+.hotspot-nav:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 16px hsl(var(--nav-hotspot) / 0.6);
+}
+
+.hotspot-info {
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--info-hotspot));
+  border: 2px solid hsl(var(--info-hotspot) / 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px hsl(var(--info-hotspot) / 0.4);
+}
+.hotspot-info:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 16px hsl(var(--info-hotspot) / 0.6);
+}
+
+.hotspot-delete {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: hsl(var(--destructive));
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hotspot-nav:hover .hotspot-delete,
+.hotspot-info:hover .hotspot-delete {
+  display: flex;
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  margin-bottom: 6px;
+  border: 1px solid hsl(var(--border));
+}
+
+.hotspot-nav:hover .hotspot-tooltip,
+.hotspot-info:hover .hotspot-tooltip {
+  opacity: 1;
+}
+
+@keyframes hotspot-pulse-ring {
+  0% { box-shadow: 0 0 0 0 hsl(var(--nav-hotspot) / 0.6); }
+  70% { box-shadow: 0 0 0 14px hsl(var(--nav-hotspot) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--nav-hotspot) / 0); }
+}
+
+.hotspot-pulse {
+  animation: hotspot-pulse-ring 0.8s ease-out;
+}
+
+@keyframes video-hotspot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ── Virtual Tour Viewer ────────────────────────────────────────────────── */
+
+/* Info marker in the panorama */
+.vtour-info-marker {
+  width: 36px;
+  height: 36px;
+  background: hsl(var(--info-hotspot));
+  border: 2.5px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 0 4px hsl(var(--info-hotspot) / 0.25), 0 2px 12px rgba(0,0,0,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: info-pulse 2.5s ease-in-out infinite;
+}
+.vtour-info-marker:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 8px hsl(var(--info-hotspot) / 0.2), 0 4px 20px rgba(0,0,0,0.5);
+}
+@keyframes info-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px hsl(var(--info-hotspot) / 0.25), 0 2px 12px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 0 0 10px hsl(var(--info-hotspot) / 0.1), 0 2px 12px rgba(0,0,0,0.4); }
+}
+
+/* Info popup content */
+.vtour-popup-content {
+  min-width: 200px;
+  text-align: center;
+  padding: 8px 4px;
+}
+.vtour-popup-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+.vtour-popup-content h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: hsl(var(--foreground));
+}
+.vtour-popup-content p {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Override PSV gallery to match dark theme */
+.psv-gallery {
+  background: rgba(0,0,0,0.85) !important;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+.psv-gallery-item {
+  border-radius: 8px !important;
+  overflow: hidden;
+  border: 2px solid transparent !important;
+  transition: border-color 0.2s, transform 0.2s !important;
+}
+.psv-gallery-item:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(255,255,255,0.3) !important;
+}
+.psv-gallery-item--active {
+  border-color: hsl(var(--primary)) !important;
+}
+.psv-gallery-item__title {
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+
+/* Override VTP arrow color */
+.psv-virtual-tour__arrow {
+  color: #3b82f6 !important;
+  filter: drop-shadow(0 0 8px rgba(59,130,246,0.6)) !important;
+}
+.psv-virtual-tour__arrow:hover {
+  color: #60a5fa !important;
+  filter: drop-shadow(0 0 16px rgba(59,130,246,0.9)) !important;
+}
+
+/* PSV loader */
+.psv-loader {
+  background: rgba(0,0,0,0.7) !important;
+}
+
+/* PSV tooltip styling */
+.psv-tooltip {
+  background: rgba(0,0,0,0.85) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px) !important;
+  font-size: 12px !important;
+}
+
+/* PSV panel (popup) */
+.psv-panel {
+  background: hsl(var(--card)) !important;
+  border-left: 1px solid hsl(var(--border)) !important;
+}
